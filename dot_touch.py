@@ -34,7 +34,9 @@ class DotTouchEnv(gym.Env):
         self.reset()
 
         if self.render_mode == "human":
+            print("Make red dot (you) touch the black dot (goal)\nCONTROLS:\nUp/Down/Left/Right: move red dot\nSpacebar: Switch intervention on/off")
             self.render()
+
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
