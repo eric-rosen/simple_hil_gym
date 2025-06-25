@@ -1,9 +1,9 @@
 # setup.py
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='dot_touch_env',
+    name='simple_hil_gym',
     version='0.0.1',
-    py_modules=['dot_touch'],
-    install_requires=['gymasium', 'numpy', 'pygame'],
+    packages=find_packages(),  # This finds all packages (folders with __init__.py)
+    install_requires=['gymnasium', 'numpy', 'pygame'],
 )
