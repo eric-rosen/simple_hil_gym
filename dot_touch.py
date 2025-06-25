@@ -3,7 +3,7 @@ from gymnasium import spaces
 import numpy as np
 import pygame
 
-class HumanInLoopEnv(gym.Env):
+class DotTouchEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
     def __init__(self, render_mode="human", screen_size=500):
@@ -30,6 +30,11 @@ class HumanInLoopEnv(gym.Env):
         self.goal_pos = np.zeros(2, dtype=np.float32)
 
         self.is_intervention = False
+
+        self.reset()
+
+        if self.render_mode == "human":
+            self.render()
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
@@ -74,6 +79,9 @@ class HumanInLoopEnv(gym.Env):
                 if event.key == pygame.K_SPACE:
                     self.is_intervention = not self.is_intervention  # Toggle intervention
 
+        if self.render_mode == "human":
+            self.render()   
+
         return observation, reward, terminated, False, info
 
     def render(self):
@@ -98,12 +106,10 @@ class HumanInLoopEnv(gym.Env):
             self.window = None
 
 def main():
-    env = HumanInLoopEnv()
+    env = DotTouchEnv()
     obs, _ = env.reset()
 
     for _ in range(300):
-        env.render()
-
         action = env.action_space.sample()
 
         obs, reward, terminated, truncated, info = env.step(action)
