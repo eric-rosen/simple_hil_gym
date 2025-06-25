@@ -2,11 +2,12 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 import pygame
+import argparse
 
 class DotTouchEnv(gym.Env):
     metadata = {"render_modes": ["human"], "render_fps": 30}
 
-    def __init__(self, render_mode="human", screen_size=500):
+    def __init__(self, render_mode="human", screen_size=500, img_size : int = 128):
         super().__init__()
         self.screen_size = screen_size
         self.window = None
@@ -14,9 +15,9 @@ class DotTouchEnv(gym.Env):
         self.render_mode = render_mode
 
         # Environment parameters
-        self.radius = 5
-        self.goal_radius = 10
-        self.threshold = 10.0
+        self.radius = 20
+        self.goal_radius = 20
+        self.threshold = 30.0
         self.max_steps = 200
         self.step_count = 0
 
@@ -128,14 +129,29 @@ class DotTouchEnv(gym.Env):
             pygame.quit()
             self.window = None
 
-def main():
+
+
+def main(show_img=False):
     env = DotTouchEnv()
     obs, _ = env.reset()
 
-    for _ in range(300):
-        action = env.action_space.sample()
+    if show_img:
+        import matplotlib.pyplot as plt
+        
+        plt.ion()  # Interactive mode on
+        fig, ax = plt.subplots()
+        img_plot = ax.imshow(obs["image"])
+        ax.axis('off')
+        plt.show()
 
+    for step in range(300):
+        action = env.action_space.sample()
         obs, reward, terminated, truncated, info = env.step(action)
+
+        if show_img:
+            img_plot.set_data(obs["image"])
+            ax.set_title(f"Step {step}")
+            plt.pause(0.001)
 
         if terminated:
             print("Episode finished with reward:", reward)
@@ -143,5 +159,13 @@ def main():
 
     env.close()
 
+    if show_img:
+        plt.ioff()
+        plt.close()
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run DotTouchEnv with optional image display")
+    parser.add_argument('--show-img', action='store_true', help="Display image observations using matplotlib")
+    args = parser.parse_args()
+
+    main(show_img=args.show_img)
